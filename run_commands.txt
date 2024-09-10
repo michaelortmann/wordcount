@@ -27,3 +27,4 @@ rust/wordcount/wordcount
 scala -J-Xms2G -J-Xmx8g -classpath scala Wordcount
 guile -L guile guile/wordcount.scm
 zig/zig-out/bin/wordcount
+zig/zig-out/bin/wordcount_threaded

@@ -31,7 +31,7 @@ pub fn main() !void {
     }
 
     var it = map.iterator();
-    var a = try allocator.alloc(Entry, map.count());
+    const a = try allocator.alloc(Entry, map.count());
     var i: u32 = 0;
 
     while (it.next()) |kv| {
@@ -39,7 +39,7 @@ pub fn main() !void {
         i += 1;
     }
 
-    std.mem.sortUnstable(Entry, a, {}, comptime cmp);
+    std.mem.sortUnstable(Entry, a, {}, cmp);
     var buffered_writer = std.io.bufferedWriter(std.io.getStdOut().writer());
 
     for (a) |e| {
