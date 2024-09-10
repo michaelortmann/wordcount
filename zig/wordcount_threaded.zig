@@ -8,7 +8,8 @@ const Entry = struct { key_ptr: *[]const u8, value: u32 };
 fn cmp1(context: void, a: *[]const u8, b: *[]const u8) bool {
     _ = context;
 
-    return std.mem.lessThan(u8, a.*, b.*);
+    // faster than return std.mem.lessThan(u8, a.*, b.*);
+    return std.mem.order(u8, a.*, b.*).compare(std.math.CompareOperator.lt);
 }
 
 fn work(a: []*[]const u8) void {
@@ -24,7 +25,8 @@ fn cmp2(context: void, a: Entry, b: Entry) bool {
     if (a.value > b.value)
         return true;
 
-    return std.mem.lessThan(u8, a.key_ptr.*, b.key_ptr.*);
+    // faster than return std.mem.lessThan(u8, a.key_ptr.*, b.key_ptr.*);
+    return std.mem.order(u8, a.key_ptr.*, b.key_ptr.*).compare(std.math.CompareOperator.lt);
 }
 
 pub fn main() !void {

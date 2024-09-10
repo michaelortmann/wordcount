@@ -14,7 +14,8 @@ fn cmp(context: void, a: Entry, b: Entry) bool {
     if (a.value > b.value)
         return true;
 
-    return std.mem.lessThan(u8, a.key_ptr.*, b.key_ptr.*);
+    // faster than return std.mem.lessThan(u8, a.key_ptr.*, b.key_ptr.*);
+    return std.mem.order(u8, a.key_ptr.*, b.key_ptr.*).compare(std.math.CompareOperator.lt);
 }
 
 pub fn main() !void {
