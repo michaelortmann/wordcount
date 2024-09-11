@@ -35,6 +35,8 @@ pub fn main() !void {
     const buf = try buffered_reader.reader().readAllAlloc(allocator, 8 * 1024 * 1024 * 1024);
     var tokens = std.mem.tokenizeAny(u8, buf, " \t\n");
     var map = std.StringHashMap(u32).init(allocator);
+    // tune StringHashMap capacity to avoid resize / rehash
+    try map.ensureTotalCapacity(@intCast(tokens.buffer.len / 231));
 
     while (tokens.next()) |word| {
         if (map.getPtr(word)) |ptr| {
