@@ -3,19 +3,19 @@
 
 const std = @import("std");
 
-const Entry = struct { key_ptr: *[]const u8, value: u32 };
+const Entry = struct { key_ptr: []const u8, value: u32 };
 
 fn cmp(context: void, a: Entry, b: Entry) bool {
     _ = context;
 
+    if (a.value == b.value)
+        // faster than return std.mem.lessThan(u8, a.key_ptr, b.key_ptr);
+        return std.mem.order(u8, a.key_ptr, b.key_ptr).compare(std.math.CompareOperator.lt);
+
     if (a.value < b.value)
         return false;
 
-    if (a.value > b.value)
-        return true;
-
-    // faster than return std.mem.lessThan(u8, a.key_ptr.*, b.key_ptr.*);
-    return std.mem.order(u8, a.key_ptr.*, b.key_ptr.*).compare(std.math.CompareOperator.lt);
+    return true;
 }
 
 pub fn main() !void {
@@ -38,7 +38,7 @@ pub fn main() !void {
     var i: u32 = 0;
 
     while (it.next()) |kv| {
-        a[i] = Entry{ .key_ptr = kv.key_ptr, .value = (kv.value_ptr.* << 7) | ((kv.key_ptr.*[0] >> 1) ^ 0x7f) };
+        a[i] = Entry{ .key_ptr = kv.key_ptr.*, .value = (kv.value_ptr.* << 7) | ((kv.key_ptr.*[0] >> 1) ^ 0x7f) };
         i += 1;
     }
 
@@ -46,7 +46,7 @@ pub fn main() !void {
     var buffered_writer = std.io.bufferedWriter(std.io.getStdOut().writer());
 
     for (a) |e| {
-        try buffered_writer.writer().print("{s}\t{any}\n", .{ e.key_ptr.*, e.value >> 7 });
+        try buffered_writer.writer().print("{s}\t{any}\n", .{ e.key_ptr, e.value >> 7 });
     }
 
     try buffered_writer.flush();
