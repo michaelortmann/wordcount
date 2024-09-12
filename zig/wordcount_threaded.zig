@@ -30,9 +30,9 @@ fn cmp2(context: void, a: Entry, b: Entry) bool {
 }
 
 pub fn main() !void {
-    var buffered_reader = std.io.bufferedReader(std.io.getStdIn().reader());
     const allocator = std.heap.page_allocator;
-    const buf = try buffered_reader.reader().readAllAlloc(allocator, 8 * 1024 * 1024 * 1024);
+    // faster than bufferedReader
+    const buf = try std.io.getStdIn().readToEndAllocOptions(allocator, 16 * 1024 * 1024 * 1024, 6 * 1024 * 1024 * 1024, @alignOf(u8), null);
     var tokens = std.mem.tokenizeAny(u8, buf, " \t\n");
     var map = std.StringHashMap(u32).init(allocator);
     // tune StringHashMap capacity to avoid resize / rehash
